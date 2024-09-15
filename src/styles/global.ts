@@ -651,3 +651,78 @@ export const container = StyleSheet.create({
     marginBottom: 10,
   },
 })
+
+export const championVoley = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  viewTitle: {
+    marginBottom: 10,
+    width: '100%',
+    padding: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#D9D9D9',
+  },
+  viewGame: {
+    marginBottom: 30,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  viewSets: {
+    marginBottom: 10,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#d9d9d9',
+  },
+  viewTeams: {
+    width: 180,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#D9D9D9',
+    padding: 10,
+  },
+  btnCheck: {
+    width: 40,
+    height: 40,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  viewPlusSet: {
+    padding: 10,
+    backgroundColor: '#A09EFF',
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  viewMinusSet: {
+    padding: 10,
+    backgroundColor: '#FF8C8C',
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textTitle: {
+    fontSize: 16,
+    color: '#000000',
+  },
+  textTeams: {
+    fontSize: 14,
+    color: '#000000',
+  },
+  textPlacarSet: {
+    fontSize: 16,
+    color: '#000000',
+  },
+
+})

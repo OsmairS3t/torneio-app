@@ -3,19 +3,34 @@ import { supabase } from "../../lib/supabase";
 import { useEffect, useState } from "react";
 import { Feather } from '@expo/vector-icons'
 import { SelectList } from "react-native-dropdown-select-list";
-import { IGame, ISelect } from "../../utils/interface";
+import { IGame, IGoal, ISelect, ITournament } from "../../utils/interface";
 import Countdown from "../../functions/CountDown";
 import { router } from "expo-router";
-import { container, global, form, championship } from "../../styles/global";
+import { container, global, form, championship, championVoley } from "../../styles/global";
 import Header from "../../compontents/header";
+import { GameVoley } from "../../compontents/gameVoley";
 
 export default function Campeonato() {
+  let pointVoley: IGoal = {
+    totalPointOne: 0,
+    totalPointTwo: 0,
+    playedSetOne: {
+      gameSet: 0,
+      setPoint: 0,
+    },
+    playedSetTwo: {
+      gameSet: 0,
+      setPoint: 0,
+    }
+  }
   const [tournamentId, setTournamentId] = useState('')
   const [tournamentName, setTournamentName] = useState('')
+  const [tournament, setTournament] = useState<ITournament>()
   const [dataTournament, setDataTournament] = useState<ISelect[]>([])
   const [games, setGames] = useState<IGame[]>([])
   const [game, setGame] = useState<IGame>()
   const [isModalGameOpen, setIsModalGameOpen] = useState(false)
+  const [isModalGameVoleyOpen, setIsModalGameVoleyOpen] = useState(false)
   const [goalOne, setGoalOne] = useState(0)
   const [goalTwo, setGoalTwo] = useState(0)
   const [goalPenaltyOne, setGoalPenaltyOne] = useState(0)
@@ -25,6 +40,16 @@ export default function Campeonato() {
   const [stage, setStage] = useState('')
   const [textButtonPenalty, setTextButtonPenalty] = useState('Ir para cobrança de Penaltis')
   const [isPenalty, setIsPenalty] = useState<boolean>(false)
+  const [pointTeamOneSetOne, setPointTeamOneSetOne] = useState(0)
+  const [pointTeamTwoSetOne, setPointTeamTwoSetOne] = useState(0)
+  const [pointTeamOneSetTwo, setPointTeamOneSetTwo] = useState(0)
+  const [pointTeamTwoSetTwo, setPointTeamTwoSetTwo] = useState(0)
+  const [pointTeamOneSetThree, setPointTeamOneSetThree] = useState(0)
+  const [pointTeamTwoSetThree, setPointTeamTwoSetThree] = useState(0)
+  const [pointTeamOneSetFour, setPointTeamOneSetFour] = useState(0)
+  const [pointTeamTwoSetFour, setPointTeamTwoSetFour] = useState(0)
+  const [pointTeamOneSetFive, setPointTeamOneSetFive] = useState(0)
+  const [pointTeamTwoSetFive, setPointTeamTwoSetFive] = useState(0)
   let count = 1
 
   async function loadClassification() {
@@ -96,6 +121,7 @@ export default function Campeonato() {
   async function listGames(id_tournament: number, stage: string) {
     const dataTournament = await supabase.from('tournaments').select('*').eq('id', id_tournament)
     if (dataTournament.data) {
+      setTournament(dataTournament.data[0])
       setTournamentName(dataTournament.data[0].name)
     }
     const { data } = await supabase
@@ -150,19 +176,40 @@ export default function Campeonato() {
     }
   }
 
-  function playGame(gamePlay: IGame) {
-    setIsModalGameOpen(true)
-    setGame(gamePlay)
-    setGoalOne(gamePlay.goal_team_one)
-    setGoalTwo(gamePlay.goal_team_two)
-    setGoalPenaltyOne(gamePlay.goal_penalty_one)
-    setGoalPenaltyTwo(gamePlay.goal_penalty_two)
-    setTeamOne(gamePlay.team_one)
-    setTeamTwo(gamePlay.team_two)
-    if (gamePlay.goal_penalty_one > 0 || gamePlay.goal_penalty_two > 0) {
-      setIsPenalty(true)
+  function Points(
+    value: number,
+    setValue: React.Dispatch<React.SetStateAction<number>>,
+    operation: string
+  ) {
+    if (operation === '-') {
+      setValue(value - 1)
     } else {
-      setIsPenalty(false)
+      setValue(value + 1)
+    }
+  }
+
+  function playGame(gamePlay: IGame, type: String) {
+    if (type === 'Futebol') {
+      setIsModalGameOpen(true)
+      setGame(gamePlay)
+      setGoalOne(gamePlay.goal_team_one)
+      setGoalTwo(gamePlay.goal_team_two)
+      setGoalPenaltyOne(gamePlay.goal_penalty_one)
+      setGoalPenaltyTwo(gamePlay.goal_penalty_two)
+      setTeamOne(gamePlay.team_one)
+      setTeamTwo(gamePlay.team_two)
+      if (gamePlay.goal_penalty_one > 0 || gamePlay.goal_penalty_two > 0) {
+        setIsPenalty(true)
+      } else {
+        setIsPenalty(false)
+      }
+    } else {
+      setIsModalGameVoleyOpen(true)
+      setGame(gamePlay)
+      setGoalOne(gamePlay.goal_team_one)
+      setGoalTwo(gamePlay.goal_team_two)
+      setTeamOne(gamePlay.team_one)
+      setTeamTwo(gamePlay.team_two)
     }
     // setGroup(gamePlay.group_team)
   }
@@ -405,7 +452,7 @@ export default function Campeonato() {
         <ScrollView style={{ overflow: 'scroll', height: 450 }}>
           {games.map(item => (
             <TouchableOpacity
-              key={item.id} onPress={() => playGame(item)}
+              key={item.id} onPress={() => playGame(item, tournament ? tournament.modality : 'Futebol')}
               style={item.status_game ? container.gameContainerPlayDisabled : container.gameContainerPlay}
             >
               <View style={container.gameContainerNormalPlay}>
@@ -417,7 +464,7 @@ export default function Campeonato() {
                 <Text style={container.textTeamTwo}>{item.team_two}</Text>
               </View>
 
-              {(item.goal_penalty_one > 0 || item.goal_penalty_two > 0) && 
+              {(item.goal_penalty_one > 0 || item.goal_penalty_two > 0) &&
                 <View style={container.gameContainerPenaltyPlay}>
                   <Text style={container.textTeamOne}></Text>
                   <Text>{item.goal_penalty_one}</Text>
@@ -431,86 +478,109 @@ export default function Campeonato() {
         </ScrollView>
       </View>
 
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={isModalGameOpen}
-        onRequestClose={() => {
-          setIsModalGameOpen(!isModalGameOpen);
-        }}>
+      {
+        /* PARTIDA DE FUTEBOL */
+        tournament?.modality === 'Futebol' ?
+          <Modal
+            animationType="slide"
+            transparent={false}
+            visible={isModalGameOpen}
+            onRequestClose={() => {
+              setIsModalGameOpen(!isModalGameOpen);
+            }}>
 
-        <View style={container.form}>
-          <View style={container.gameContainerOnPlay}>
-            <View style={championship.headerModalPage}>
-              <TouchableOpacity style={championship.buttonHeaderPage} onPress={() => setIsModalGameOpen(false)}>
-                <Feather name="x-square" size={30} style={championship.iconClose} />
-              </TouchableOpacity>
-            </View>
+            <View style={container.form}>
+              <View style={container.gameContainerOnPlay}>
+                <View style={championship.headerModalPage}>
+                  <TouchableOpacity style={championship.buttonHeaderPage} onPress={() => setIsModalGameOpen(false)}>
+                    <Feather name="x-square" size={30} style={championship.iconClose} />
+                  </TouchableOpacity>
+                </View>
 
-            <Text style={container.textGameX}>{game?.team_one}</Text>
-            <View style={container.placar}>
-              <TouchableOpacity onPress={() => GoalOne('-')} style={container.buttonPlacarMinus}>
-                <Text>-</Text>
-              </TouchableOpacity>
-              <Text style={container.textGamePlay}>{goalOne}</Text>
-              <TouchableOpacity onPress={() => GoalOne('+')} style={container.buttonPlacarPlus}>
-                <Text>+</Text>
-              </TouchableOpacity>
-            </View>
+                <Text style={container.textGameX}>{game?.team_one}</Text>
+                <View style={container.placar}>
+                  <TouchableOpacity onPress={() => GoalOne('-')} style={container.buttonPlacarMinus}>
+                    <Text>-</Text>
+                  </TouchableOpacity>
+                  <Text style={container.textGamePlay}>{goalOne}</Text>
+                  <TouchableOpacity onPress={() => GoalOne('+')} style={container.buttonPlacarPlus}>
+                    <Text>+</Text>
+                  </TouchableOpacity>
+                </View>
 
-            {(isPenalty) &&
-              <View style={container.placarPenalty}>
-                <TouchableOpacity onPress={() => GoalPenaltyOne('-')} style={container.buttonPlacarPenaltyMinus}>
-                  <Text>-</Text>
-                </TouchableOpacity>
-                <Text style={container.textGamePlay}>{goalPenaltyOne}</Text>
-                <TouchableOpacity onPress={() => GoalPenaltyOne('+')} style={container.buttonPlacarPenaltyPlus}>
-                  <Text>+</Text>
+                {(isPenalty) &&
+                  <View style={container.placarPenalty}>
+                    <TouchableOpacity onPress={() => GoalPenaltyOne('-')} style={container.buttonPlacarPenaltyMinus}>
+                      <Text>-</Text>
+                    </TouchableOpacity>
+                    <Text style={container.textGamePlay}>{goalPenaltyOne}</Text>
+                    <TouchableOpacity onPress={() => GoalPenaltyOne('+')} style={container.buttonPlacarPenaltyPlus}>
+                      <Text>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                }
+
+                <Text style={container.textGameX}>X</Text>
+
+                {(isPenalty) &&
+                  <View style={container.placarPenalty}>
+                    <TouchableOpacity onPress={() => GoalPenaltyTwo('-')} style={container.buttonPlacarPenaltyMinus}>
+                      <Text>-</Text>
+                    </TouchableOpacity>
+                    <Text style={container.textGamePlay}>{goalPenaltyTwo}</Text>
+                    <TouchableOpacity onPress={() => GoalPenaltyTwo('+')} style={container.buttonPlacarPenaltyPlus}>
+                      <Text>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                }
+
+                <View style={container.placar}>
+                  <TouchableOpacity onPress={() => GoalTwo('-')} style={container.buttonPlacarMinus}>
+                    <Text>-</Text>
+                  </TouchableOpacity>
+                  <Text style={container.textGamePlay}>{goalTwo}</Text>
+                  <TouchableOpacity onPress={() => GoalTwo('+')} style={container.buttonPlacarPlus}>
+                    <Text>+</Text>
+                  </TouchableOpacity>
+                </View>
+                <Text style={container.textGameX}>{game?.team_two}</Text>
+
+                {(stage !== 'GRUPOS') &&
+                  <TouchableOpacity style={container.btnPenaltis} onPress={loadPenalties}>
+                    <Text style={container.textButtonPenaltis}>{textButtonPenalty}</Text>
+                  </TouchableOpacity>
+                }
+
+                <View style={container.containerMarkPlay}>
+                  <Countdown initialSeconds={Number(game?.duration) * 60} />
+                </View>
+
+                <TouchableOpacity style={form.button} onPress={() => saveGame()}>
+                  <Text style={form.textButton}>Salvar Resultado</Text>
                 </TouchableOpacity>
               </View>
-            }
-
-            <Text style={container.textGameX}>X</Text>
-
-            {(isPenalty) &&
-              <View style={container.placarPenalty}>
-                <TouchableOpacity onPress={() => GoalPenaltyTwo('-')} style={container.buttonPlacarPenaltyMinus}>
-                  <Text>-</Text>
-                </TouchableOpacity>
-                <Text style={container.textGamePlay}>{goalPenaltyTwo}</Text>
-                <TouchableOpacity onPress={() => GoalPenaltyTwo('+')} style={container.buttonPlacarPenaltyPlus}>
-                  <Text>+</Text>
-                </TouchableOpacity>
-              </View>
-            }
-
-            <View style={container.placar}>
-              <TouchableOpacity onPress={() => GoalTwo('-')} style={container.buttonPlacarMinus}>
-                <Text>-</Text>
-              </TouchableOpacity>
-              <Text style={container.textGamePlay}>{goalTwo}</Text>
-              <TouchableOpacity onPress={() => GoalTwo('+')} style={container.buttonPlacarPlus}>
-                <Text>+</Text>
-              </TouchableOpacity>
             </View>
-            <Text style={container.textGameX}>{game?.team_two}</Text>
+          </Modal>
 
-            {(stage !== 'GRUPOS') &&
-              <TouchableOpacity style={container.btnPenaltis} onPress={loadPenalties}>
-                <Text style={container.textButtonPenaltis}>{textButtonPenalty}</Text>
-              </TouchableOpacity>
-            }
+          : /* PARTIDA DE VOLEI  */
+          <Modal
+            visible={isModalGameVoleyOpen}
+            animationType="slide"
+            transparent={false}
+            onRequestClose={() => {
+              setIsModalGameVoleyOpen(!isModalGameVoleyOpen);
+            }}
+          >
+            <GameVoley
+              tournament={tournament!}
+              game={game!}
+              setIsModalOpen={setIsModalGameVoleyOpen}
+              point={pointVoley}
+            />
 
-            <View style={container.containerMarkPlay}>
-              <Countdown initialSeconds={Number(game?.duration) * 60} />
-            </View>
+          </Modal>
+      }
 
-            <TouchableOpacity style={form.button} onPress={() => saveGame()}>
-              <Text style={form.textButton}>Salvar Resultado</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </View>
   )
 }

@@ -78,3 +78,15 @@ export interface IStatusTeam {
   goal_difference: number;
   group_team: string;
 }
+export interface IGoal {
+  totalPointOne: number;
+  totalPointTwo: number;
+  playedSetOne: {
+    gameSet: number;
+    setPoint: number;
+  }
+  playedSetTwo: {
+    gameSet: number;
+    setPoint: number;
+  }
+}
