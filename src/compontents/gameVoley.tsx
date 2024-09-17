@@ -14,7 +14,6 @@ interface GameVoleyProps {
 }
 
 export function GameVoley({ tournament, game, point, setIsModalOpen }: GameVoleyProps) {
-  let pointPlayed: IGoal
   const [pointTeamOneSetOne, setPointTeamOneSetOne] = useState(0)
   const [pointTeamTwoSetOne, setPointTeamTwoSetOne] = useState(0)
   const [pointTeamOneSetTwo, setPointTeamOneSetTwo] = useState(0)
@@ -54,20 +53,92 @@ export function GameVoley({ tournament, game, point, setIsModalOpen }: GameVoley
     }
 
     if (point.playedSetOne.gameSet === 1) {
-      if (point.playedSetOne.setPoint >= 15 && (point.playedSetOne.setPoint - point.playedSetTwo.setPoint) >= 2) {
-        point.totalPointOne += 1
+      if ((point.playedSetOne.setPoint >= 15) && (point.playedSetOne.setPoint - point.playedSetTwo.setPoint) >= 2) {
+        point.playedSetOne.totalSet = 1
+        point.totalPointOne = point.playedSetOne.totalSet
+      } else {
+        point.playedSetOne.totalSet = 0
       }
-    }
-    if (point.playedSetTwo.gameSet === 1) {
       if (point.playedSetTwo.setPoint >= 15 && (point.playedSetTwo.setPoint - point.playedSetOne.setPoint) >= 2) {
-        point.totalPointTwo += 1
+        point.playedSetTwo.totalSet = 1
+        point.totalPointTwo = point.playedSetTwo.totalSet
+      } else {
+        point.playedSetOne.totalSet = 0
       }
     }
+
+    if (point.playedSetOne.gameSet === 2) {
+      if ((point.playedSetOne.setPoint >= 15) && (point.playedSetOne.setPoint - point.playedSetTwo.setPoint) >= 2) {
+        point.playedSetOne.totalSet = 1
+        point.totalPointOne = point.playedSetOne.totalSet
+      } else {
+        point.playedSetOne.totalSet = 0
+      }
+      if (point.playedSetTwo.setPoint >= 15 && (point.playedSetTwo.setPoint - point.playedSetOne.setPoint) >= 2) {
+        point.playedSetTwo.totalSet = 1
+        point.totalPointTwo = point.playedSetTwo.totalSet
+      } else {
+        point.playedSetOne.totalSet = 0
+      }
+    }
+
+    if (point.playedSetOne.gameSet === 3) {
+      if ((point.playedSetOne.setPoint >= 15) && (point.playedSetOne.setPoint - point.playedSetTwo.setPoint) >= 2) {
+        point.playedSetOne.totalSet = 1
+        point.totalPointOne = point.playedSetOne.totalSet
+      } else {
+        point.playedSetOne.totalSet = 0
+      }
+      if (point.playedSetTwo.setPoint >= 15 && (point.playedSetTwo.setPoint - point.playedSetOne.setPoint) >= 2) {
+        point.playedSetTwo.totalSet = 1
+        point.totalPointTwo = point.playedSetTwo.totalSet
+      } else {
+        point.playedSetOne.totalSet = 0
+      }
+    }
+
+    if (point.playedSetOne.gameSet === 4) {
+      if ((point.playedSetOne.setPoint >= 15) && (point.playedSetOne.setPoint - point.playedSetTwo.setPoint) >= 2) {
+        point.playedSetOne.totalSet = 1
+        point.totalPointOne = point.playedSetOne.totalSet
+      } else {
+        point.playedSetOne.totalSet = 0
+      }
+      if (point.playedSetTwo.setPoint >= 15 && (point.playedSetTwo.setPoint - point.playedSetOne.setPoint) >= 2) {
+        point.playedSetTwo.totalSet = 1
+        point.totalPointTwo = point.playedSetTwo.totalSet
+      } else {
+        point.playedSetOne.totalSet = 0
+      }
+    }
+
+    if (point.playedSetOne.gameSet === 5) {
+      if ((point.playedSetOne.setPoint >= 15) && (point.playedSetOne.setPoint - point.playedSetTwo.setPoint) >= 2) {
+        point.playedSetOne.totalSet = 1
+        point.totalPointOne = point.playedSetOne.totalSet
+      } else {
+        point.playedSetOne.totalSet = 0
+      }
+      if (point.playedSetTwo.setPoint >= 15 && (point.playedSetTwo.setPoint - point.playedSetOne.setPoint) >= 2) {
+        point.playedSetTwo.totalSet = 1
+        point.totalPointTwo = point.playedSetTwo.totalSet
+      } else {
+        point.playedSetOne.totalSet = 0
+      }
+    }
+
     // console.log("Pontos: ", point)
   }
 
   async function saveGame() {
 
+  }
+
+  const objSet = {
+    codSet: 0,
+    operator: '+',
+    pointSetOne: 0,
+    pointSetTwo: 0,
   }
 
   return (

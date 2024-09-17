@@ -84,9 +84,11 @@ export interface IGoal {
   playedSetOne: {
     gameSet: number;
     setPoint: number;
+    totalSet: number;
   }
   playedSetTwo: {
     gameSet: number;
     setPoint: number;
+    totalSet: number;
   }
 }
