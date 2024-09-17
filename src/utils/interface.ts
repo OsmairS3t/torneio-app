@@ -78,7 +78,16 @@ export interface IStatusTeam {
   goal_difference: number;
   group_team: string;
 }
-export interface IGoal {
+
+export interface IGameSet {
+  id: number;
+  id_game: number;
+  actual_set: number;
+  set_point_one: number;
+  set_point_two: number;
+}
+
+export interface IPoint {
   totalPointOne: number;
   totalPointTwo: number;
   playedSetOne: {

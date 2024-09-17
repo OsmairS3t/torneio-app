@@ -358,7 +358,6 @@ export const championship = StyleSheet.create({
   iconClose: {
     color: 'white',
   },
-
 })
 
 export const container = StyleSheet.create({
@@ -723,6 +722,19 @@ export const championVoley = StyleSheet.create({
   textPlacarSet: {
     fontSize: 16,
     color: '#000000',
+  },
+  btnSave: {
+    width: '100%',
+    height: 50,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#0081a8',
+  },
+  textBtnSave: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '500',
   },
 
 })
