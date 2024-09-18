@@ -649,6 +649,10 @@ export const container = StyleSheet.create({
     marginTop: 30,
     marginBottom: 10,
   },
+  blockColorTeams: {
+    width: 50,
+    height: 50,
+  },
 })
 
 export const championVoley = StyleSheet.create({

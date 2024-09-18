@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native"
 import { Feather } from '@expo/vector-icons'
 import { championVoley } from "../styles/global"
-import { IGame, IGameSet } from "../utils/interface";
+import { IGameSet } from "../utils/interface";
 import { supabase } from "../lib/supabase";
 
 interface Props {
@@ -11,9 +11,9 @@ interface Props {
   setGoalTeamTwo: (point: number) => void;
 }
 
-export function SetPlayGame({ gameSet, setGoalTeamOne, setGoalTeamTwo }: Props) {
-  const [goalOne, setGoalOne] = useState(0)
-  const [goalTwo, setGoalTwo] = useState(0)
+export function SetPlayGameVoley({ gameSet, setGoalTeamOne, setGoalTeamTwo }: Props) {
+  let goalOne = 0
+  let goalTwo = 0
   const [pointsOne, setPointsOne] = useState(gameSet.set_point_one)
   const [pointsTwo, setPointsTwo] = useState(gameSet.set_point_two)
 
@@ -28,41 +28,50 @@ export function SetPlayGame({ gameSet, setGoalTeamOne, setGoalTeamTwo }: Props) 
       if (team === 1) {
         setPointsOne(pointsOne - 1)
       } else {
-        setPointsOne(pointsTwo - 1)
+        setPointsTwo(pointsTwo - 1)
       }
     }
   }
 
   async function handleSaveSet() {
     try {
-      const {data} = await supabase.from('games').select('*').eq('id', gameSet.id_game)
-      if (data) {
-        let gameFounded: IGame = data[0]
-        setGoalOne(gameFounded.goal_team_one)
-        setGoalTwo(gameFounded.goal_team_two)
-      }
-      if((pointsOne - pointsTwo) >= 2) {
-        setGoalOne(goalOne + 1)
-      }
-      if((pointsTwo - pointsOne) >= 2) {
-        setGoalTwo(goalTwo + 1)
-      }
-
       await supabase.from('gamesets').update({
         set_point_one: pointsOne,
         set_point_two: pointsTwo,
       }).eq('id', gameSet.id)
-
-      await supabase.from('games').update({
-          goal_team_one: goalOne,
-          goal_team_two: goalTwo,
-      }).eq('id', gameSet.id_game)
-      setGoalTeamOne(goalOne)
-      setGoalTeamTwo(goalTwo)
-      Alert.alert('Set gravado com sucesso!')
+      
+      updateGame()
+      Alert.alert(`Set gravado com sucesso!`)
     } catch (error) {
       console.log(error)
     }
+  }
+
+  async function updateGame() {
+    const { data } = await supabase
+      .from('gamesets')
+      .select('*')
+      .eq('id_game', gameSet.id_game)
+      .order('actual_set', {ascending: true})
+
+    if (data) {
+      const GameSet: IGameSet[] = data
+      GameSet.map(item => {
+        if((item.set_point_one - item.set_point_two) >= 2) {
+          goalOne = goalOne + 1
+        }
+        if((item.set_point_two - item.set_point_one) >= 2) {
+          goalTwo = goalTwo + 1
+        }
+      })
+    }
+
+    await supabase.from('games').update({
+      goal_team_one: goalOne,
+      goal_team_two: goalTwo,
+    }).eq('id', gameSet.id_game)
+    setGoalTeamOne(goalOne)
+    setGoalTeamTwo(goalTwo)
   }
 
   return (

@@ -3,7 +3,7 @@ import { supabase } from "../../lib/supabase";
 import { useEffect, useState } from "react";
 import { Feather } from '@expo/vector-icons'
 import { SelectList } from "react-native-dropdown-select-list";
-import { IGame, IGoal, ISelect, ITournament } from "../../utils/interface";
+import { IGame, ISelect, ITournament } from "../../utils/interface";
 import Countdown from "../../functions/CountDown";
 import { router } from "expo-router";
 import { container, global, form, championship, championVoley } from "../../styles/global";
@@ -11,18 +11,6 @@ import Header from "../../compontents/header";
 import { GameVoley } from "../../compontents/gameVoley";
 
 export default function Campeonato() {
-  let pointVoley: IGoal = {
-    totalPointOne: 0,
-    totalPointTwo: 0,
-    playedSetOne: {
-      gameSet: 0,
-      setPoint: 0,
-    },
-    playedSetTwo: {
-      gameSet: 0,
-      setPoint: 0,
-    }
-  }
   const [tournamentId, setTournamentId] = useState('')
   const [tournamentName, setTournamentName] = useState('')
   const [tournament, setTournament] = useState<ITournament>()
@@ -40,16 +28,6 @@ export default function Campeonato() {
   const [stage, setStage] = useState('')
   const [textButtonPenalty, setTextButtonPenalty] = useState('Ir para cobrança de Penaltis')
   const [isPenalty, setIsPenalty] = useState<boolean>(false)
-  const [pointTeamOneSetOne, setPointTeamOneSetOne] = useState(0)
-  const [pointTeamTwoSetOne, setPointTeamTwoSetOne] = useState(0)
-  const [pointTeamOneSetTwo, setPointTeamOneSetTwo] = useState(0)
-  const [pointTeamTwoSetTwo, setPointTeamTwoSetTwo] = useState(0)
-  const [pointTeamOneSetThree, setPointTeamOneSetThree] = useState(0)
-  const [pointTeamTwoSetThree, setPointTeamTwoSetThree] = useState(0)
-  const [pointTeamOneSetFour, setPointTeamOneSetFour] = useState(0)
-  const [pointTeamTwoSetFour, setPointTeamTwoSetFour] = useState(0)
-  const [pointTeamOneSetFive, setPointTeamOneSetFive] = useState(0)
-  const [pointTeamTwoSetFive, setPointTeamTwoSetFive] = useState(0)
   let count = 1
 
   async function loadClassification() {
@@ -173,18 +151,6 @@ export default function Campeonato() {
       setGoalTwo(goalTwo - 1)
     } else {
       setGoalTwo(goalTwo + 1)
-    }
-  }
-
-  function Points(
-    value: number,
-    setValue: React.Dispatch<React.SetStateAction<number>>,
-    operation: string
-  ) {
-    if (operation === '-') {
-      setValue(value - 1)
-    } else {
-      setValue(value + 1)
     }
   }
 
@@ -575,9 +541,7 @@ export default function Campeonato() {
               tournament={tournament!}
               game={game!}
               setIsModalOpen={setIsModalGameVoleyOpen}
-              point={pointVoley}
             />
-
           </Modal>
       }
 

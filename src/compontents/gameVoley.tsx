@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Alert } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 
 import { container, championship, championVoley } from "../styles/global"
 import Header from './header'
-import { SetPlayGame } from './setPlayGame'
+import { SetPlayGameVoley } from './setPlayGameVoley'
 import { IGame, ITournament, IPoint, IGameSet } from '../utils/interface'
 import { supabase } from '../lib/supabase'
 
@@ -16,8 +16,8 @@ interface GameVoleyProps {
 
 export function GameVoley({ tournament, game, setIsModalOpen }: GameVoleyProps) {
   const [gameSets, setGameSets] = useState<IGameSet[]>([])
-  const [goalTeamOne, setGoalTeamOne] = useState(0)
-  const [goalTeamTwo, setGoalTeamTwo] = useState(0)
+  const [goalTeamOne, setGoalTeamOne] = useState(game.goal_team_one)
+  const [goalTeamTwo, setGoalTeamTwo] = useState(game.goal_team_two)
 
   async function GetSets() {
     try {
@@ -31,22 +31,6 @@ export function GameVoley({ tournament, game, setIsModalOpen }: GameVoleyProps) 
       }
     } catch (error) {
       console.log(error)
-    }
-  }
-
-  async function saveGame() {
-    // console.log({
-    //   id: game.id,
-    //   goal_team_one: goalTeamOne,
-    //   goal_team_two: goalTeamTwo,
-    // })
-    try {
-      await supabase.from('games').update({
-        goal_team_one: goalTeamOne,
-        goal_team_two: goalTeamTwo,
-      }).eq('id', game.id)
-    } catch (error) {
-      console.log(error)      
     }
   }
   
@@ -78,16 +62,13 @@ export function GameVoley({ tournament, game, setIsModalOpen }: GameVoleyProps) 
       </View>
 
       {gameSets.map(item => (
-        <SetPlayGame 
+        <SetPlayGameVoley 
           key={item.id} 
-           gameSet={item}
+          gameSet={item}
           setGoalTeamOne={setGoalTeamOne}
           setGoalTeamTwo={setGoalTeamTwo}
         />
       ))}
-      <TouchableOpacity style={championVoley.btnSave} onPress={saveGame}>
-        <Text style={championVoley.textBtnSave}>Salvar Jogo</Text>
-      </TouchableOpacity>
 
     </View>
   )
