@@ -324,7 +324,44 @@ export const form = StyleSheet.create({
 
 })
 
-export const player = StyleSheet.create({})
+export const estatistica = StyleSheet.create({
+  container: {
+    marginTop: 10,
+    width: '100%',
+    height: 310
+  },
+  content: {
+    width: '100%',
+    gap: 10,
+  },
+  titulo: {
+    backgroundColor: '#b1b1b1',
+    color: '#000000',
+    fontWeight: 'bold',
+    padding: 8,
+  },
+  team: {
+    width: '100%',
+    justifyContent: 'flex-start',
+  },
+  textTeam: {
+    fontWeight: 'bold',
+  },
+  playerGroup: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    padding: 4,
+    backgroundColor: '#ffffff',
+    gap: 10,
+  },
+  player: {
+    flex: 1,
+    fontWeight: 'bold',
+  },
+  itemPlayer: {
+    width: 25,
+  },
+})
 
 export const game = StyleSheet.create({})
 

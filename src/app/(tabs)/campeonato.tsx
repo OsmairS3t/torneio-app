@@ -1,14 +1,14 @@
 import { View, Text, Modal, TouchableOpacity, ScrollView, Alert, Button } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { useEffect, useState } from "react";
-import { Feather } from '@expo/vector-icons'
+import { Feather, FontAwesome } from '@expo/vector-icons'
 import { SelectList } from "react-native-dropdown-select-list";
-import { IGame, ISelect, ITournament } from "../../utils/interface";
+import { IGame, IPlayer, ISelect, ITeam, ITournament } from "../../utils/interface";
 import Countdown from "../../functions/CountDown";
-import { router } from "expo-router";
-import { container, global, form, championship, championVoley } from "../../styles/global";
 import Header from "../../compontents/header";
 import { GameVoley } from "../../compontents/gameVoley";
+import { container, global, form, championship, estatistica } from "../../styles/global";
+import { GameStatusSoccer } from "../../compontents/gameStatusSoccer";
 
 export default function Campeonato() {
   const [tournamentId, setTournamentId] = useState('')
@@ -17,6 +17,9 @@ export default function Campeonato() {
   const [dataTournament, setDataTournament] = useState<ISelect[]>([])
   const [games, setGames] = useState<IGame[]>([])
   const [game, setGame] = useState<IGame>()
+  const [teams, setTeams] = useState<ITeam[]>([])
+  const [playersOne, setPlayersOne] = useState<IPlayer[]>([])
+  const [playersTwo, setPlayersTwo] = useState<IPlayer[]>([])
   const [isModalGameOpen, setIsModalGameOpen] = useState(false)
   const [isModalGameVoleyOpen, setIsModalGameVoleyOpen] = useState(false)
   const [goalOne, setGoalOne] = useState(0)
@@ -169,6 +172,7 @@ export default function Campeonato() {
       } else {
         setIsPenalty(false)
       }
+      listPlayers(gamePlay)
     } else {
       setIsModalGameVoleyOpen(true)
       setGame(gamePlay)
@@ -177,7 +181,41 @@ export default function Campeonato() {
       setTeamOne(gamePlay.team_one)
       setTeamTwo(gamePlay.team_two)
     }
-    // setGroup(gamePlay.group_team)
+  }
+
+  async function listPlayers(game: IGame) {
+    let idTeamOne = 0
+    let idTeamTwo = 0
+    const dataTeamOne = await supabase.from('teams').select('id').eq('name', game.team_one)
+    if(dataTeamOne.data) {
+      idTeamOne = dataTeamOne.data[0].id
+    }
+
+    const dataTeamTwo = await supabase.from('teams').select('id').eq('name', game.team_two)
+    if(dataTeamTwo.data) {
+      idTeamTwo = dataTeamTwo.data[0].id
+    }
+
+    if(idTeamOne > 0) {
+      const playerOne = await supabase
+      .from('players')
+      .select('*')
+      .eq('team_id', idTeamOne)
+      if(playerOne.data) {
+        setPlayersOne(playerOne.data)
+      }
+    }
+
+    if(idTeamTwo > 0) {
+      const playerTwo = await supabase
+      .from('players')
+      .select('*')
+      .eq('team_id', idTeamTwo)
+      if(playerTwo.data) {
+        setPlayersTwo(playerTwo.data)
+      }
+    }
+
   }
 
   async function saveGame() {
@@ -524,6 +562,9 @@ export default function Campeonato() {
                 <TouchableOpacity style={form.button} onPress={() => saveGame()}>
                   <Text style={form.textButton}>Salvar Resultado</Text>
                 </TouchableOpacity>
+
+                <GameStatusSoccer playersOne={playersOne} playersTwo={playersTwo} />
+                
               </View>
             </View>
           </Modal>

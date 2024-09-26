@@ -63,6 +63,8 @@ export interface IStatusGame {
   red_card: number;
   fault: number;
   group_team: string;
+  defeat: number;
+  team_name: string;
 }
 
 export interface IStatusTeam {
